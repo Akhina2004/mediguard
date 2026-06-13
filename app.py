@@ -1,8 +1,13 @@
+
 from flask import Flask, render_template, request, redirect, session
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
 import os
+import pytz
+
+# India Timezone
+INDIA_TZ = pytz.timezone('Asia/Kolkata')
 
 app = Flask(__name__)
 app.secret_key = "mediguard"
@@ -119,7 +124,6 @@ def doctor_dashboard():
 
     doctor = session["user"]
 
-    # Get all patients assigned to this doctor
     my_patients = []
     for username, info in users.items():
         if isinstance(info, dict) and info.get("doctor") == doctor:
@@ -151,13 +155,13 @@ def dashboard():
     user = session["user"]
     user_meds = medicines.get(user, [])
 
-    now = datetime.now().strftime("%I:%M %p")
-    today = datetime.now().strftime("%Y-%m-%d")
+    # India time use cheyyam
+    now = datetime.now(INDIA_TZ).strftime("%I:%M %p")
+    today = datetime.now(INDIA_TZ).strftime("%Y-%m-%d")
 
     # Auto-add recurring medicines for today
     for m in list(user_meds):
         if m.get("recurring") == "daily" and m.get("date") != today:
-            # Check if today's medicine already added
             exists = any(
                 x["name"] == m["name"] and x["time"] == m["time"] and x["date"] == today
                 for x in user_meds
@@ -180,7 +184,7 @@ def dashboard():
         else:
             m["alert"] = ""
 
-    return render_template("dashboard.html", user=user, meds=user_meds)
+    return render_template("dashboard.html", user=user, meds=user_meds, current_time=now)
 
 
 # ============ STATISTICS PAGE ============
@@ -227,7 +231,7 @@ def add():
     time_24 = request.form["time"]
     time_obj = datetime.strptime(time_24, "%H:%M")
     time = time_obj.strftime("%I:%M %p")
-    date = request.form.get("date") or datetime.now().strftime("%Y-%m-%d")
+    date = request.form.get("date") or datetime.now(INDIA_TZ).strftime("%Y-%m-%d")
     recurring = request.form.get("recurring", "no")
 
     if user not in medicines:
@@ -280,8 +284,6 @@ def logout():
     session.clear()
     return redirect("/")
 
-
-import os
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
