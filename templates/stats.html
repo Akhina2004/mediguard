@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Statistics</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="container">
+
+    <h2>📊 {{ user }}'s Statistics</h2>
+
+    <div style="text-align:center; margin:15px 0;">
+        <a href="/dashboard" class="btn-primary">← Dashboard</a>
+        <a href="/logout" class="btn-primary btn-danger">Logout</a>
+    </div>
+
+    <hr>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:20px;">
+        
+        <div class="stat-card" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+            <h3>📦 Total</h3>
+            <h1>{{ total }}</h1>
+        </div>
+
+        <div class="stat-card" style="background: linear-gradient(135deg, #11998e, #38ef7d);">
+            <h3>✅ Taken</h3>
+            <h1>{{ taken }}</h1>
+            <p style="color:white;">{{ taken_percent }}%</p>
+        </div>
+
+        <div class="stat-card" style="background: linear-gradient(135deg, #eb3349, #f45c43);">
+            <h3>❌ Missed</h3>
+            <h1>{{ missed }}</h1>
+            <p style="color:white;">{{ missed_percent }}%</p>
+        </div>
+
+        <div class="stat-card" style="background: linear-gradient(135deg, #f7971e, #ffd200);">
+            <h3>⏳ Pending</h3>
+            <h1>{{ pending }}</h1>
+            <p style="color:white;">{{ pending_percent }}%</p>
+        </div>
+
+    </div>
+
+    <hr>
+
+    <h3>📈 Progress Bar</h3>
+
+    <div style="background:#ecf0f1; border-radius:15px; overflow:hidden; height:40px; display:flex; box-shadow:inset 0 2px 5px rgba(0,0,0,0.1);">
+        <div style="background:linear-gradient(135deg, #11998e, #38ef7d); width:{{ taken_percent }}%; display:flex; align-items:center; justify-content:center; color:white; font-weight:600;">
+            {% if taken_percent > 10 %}{{ taken_percent }}%{% endif %}
+        </div>
+        <div style="background:linear-gradient(135deg, #eb3349, #f45c43); width:{{ missed_percent }}%; display:flex; align-items:center; justify-content:center; color:white; font-weight:600;">
+            {% if missed_percent > 10 %}{{ missed_percent }}%{% endif %}
+        </div>
+        <div style="background:linear-gradient(135deg, #f7971e, #ffd200); width:{{ pending_percent }}%; display:flex; align-items:center; justify-content:center; color:white; font-weight:600;">
+            {% if pending_percent > 10 %}{{ pending_percent }}%{% endif %}
+        </div>
+    </div>
+
+    <p style="text-align:center; margin-top:15px;">
+        🟢 Taken | 🔴 Missed | 🟡 Pending
+    </p>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,6 @@
+{
+    "Akhina": {
+        "password": "scrypt:32768:8:1$XvvSktg0LjwYo8wG$e3fbf2b03bbfd41b1799c1b8bbc874f39c4b1d5bbed0b2840370b4f23396107a63cf75163d80b85b67aa59c816a6a2acb4df112bc4eab1f9efdd1061971a3ed2",
+        "doctor": "Dr.Arun"
+    }
+}

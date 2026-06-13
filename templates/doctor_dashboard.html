@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Doctor Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="container">
+
+    <h2>👨‍⚕️ Welcome Dr. {{ doctor }}</h2>
+
+    <div style="text-align:center; margin:15px 0;">
+        <a href="/logout" class="btn-primary btn-danger">Logout</a>
+    </div>
+
+    <hr>
+
+    <h3>👥 Your Patients ({{ patients|length }})</h3>
+
+    {% if patients|length == 0 %}
+        <p style="text-align:center; padding:30px;">
+            No patients assigned yet. 😊<br>
+            Patients can select you during registration.
+        </p>
+    {% endif %}
+
+    {% for p in patients %}
+        <div style="background:white; padding:20px; margin:15px 0; border-radius:15px; border-left:5px solid #667eea; box-shadow:0 5px 15px rgba(0,0,0,0.08);">
+            
+            <h3>👤 {{ p.name }}</h3>
+
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin:15px 0;">
+                <span style="background:linear-gradient(135deg, #667eea, #764ba2); color:white; padding:8px 15px; border-radius:20px; font-weight:600;">
+                    📦 Total: {{ p.total }}
+                </span>
+                <span class="status-taken" style="padding:8px 15px; font-size:14px;">
+                    ✅ Taken: {{ p.taken }}
+                </span>
+                <span class="status-missed" style="padding:8px 15px; font-size:14px;">
+                    ❌ Missed: {{ p.missed }}
+                </span>
+                <span class="status-pending" style="padding:8px 15px; font-size:14px;">
+                    ⏳ Pending: {{ p.pending }}
+                </span>
+            </div>
+
+            <details style="margin-top:10px;">
+                <summary style="cursor:pointer; color:#667eea; font-weight:600;">📋 View All Medicines</summary>
+                <ul style="margin-top:10px;">
+                    {% for m in p.meds %}
+                        <li>
+                            <div>
+                                <b>{{ m.name }}</b> - ⏰ {{ m.time }} - 📅 {{ m.date }}
+                            </div>
+                            <div>
+                                {% if m.status == "taken" %}
+                                    <span class="status-taken">✅</span>
+                                {% elif m.status == "missed" %}
+                                    <span class="status-missed">❌</span>
+                                {% else %}
+                                    <span class="status-pending">⏳</span>
+                                {% endif %}
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </details>
+
+        </div>
+    {% endfor %}
+
+</div>
+</body>
+</html>
