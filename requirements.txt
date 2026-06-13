@@ -2,3 +2,7 @@ flask
 werkzeug
 gunicorn
 pytz
+google-generativeai
+scikit-learn
+pandas
+numpy

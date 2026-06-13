@@ -39,57 +39,59 @@
         <source src="/static/alert.mp3" type="audio/mpeg">
     </audio>
 
-    <button id="soundBtn" onclick="enableSound()">Enable Sound 🔊</button>
-
-    <h2>Welcome {{ user }}</h2>
+    <h2>👋 Welcome {{ user }}</h2>
+    
     <p style="text-align:center; font-size:18px;">
-    🕐 Current Time: <b>{{ current_time }}</b>
+        🕐 Current Time: <b>{{ current_time }}</b>
     </p>
 
-    <a href="/stats">📊 View Statistics</a> |
-    <a href="/logout">Logout</a>
+    <div style="text-align:center; margin:15px 0;">
+        <button id="soundBtn" onclick="enableSound()">🔊 Enable Sound</button>
+        <a href="/stats" class="btn-primary">📊 Statistics</a>
+        <a href="/insights" class="btn-primary">🧠 AI Insights</a>
+        <a href="/chatbot" class="btn-primary">🤖 AI Chatbot</a>
+        <a href="/logout" class="btn-primary btn-danger">Logout</a>
+    </div>
 
     <hr>
 
-    <h3>Add Medicine</h3>
+    <h3>➕ Add New Medicine</h3>
     <form method="POST" action="/add">
         <input name="name" placeholder="Medicine Name" required>
         <input name="time" type="time" required>
         <input name="date" type="date">
-
         <br>
         <label>Recurring:</label>
         <select name="recurring">
             <option value="no">One Time Only</option>
             <option value="daily">Every Day 🔁</option>
         </select>
-
-        <button type="submit">Add</button>
+        <button type="submit">➕ Add</button>
     </form>
 
     <hr>
 
-    <h3>Your Medicines</h3>
+    <h3>💊 Your Medicines</h3>
     <ul>
     {% for m in meds %}
         <li>
             <div>
-                <b>{{ m.name }}</b> - {{ m.time }} - {{ m.date }}
-                
-                {% if m.recurring == "daily" %}
-                    🔁 Daily
-                {% endif %}
+                <b style="font-size:18px;">{{ m.name }}</b>
+                <br>
+                ⏰ {{ m.time }} | 📅 {{ m.date }}
+                {% if m.recurring == "daily" %}🔁{% endif %}
+                <br>
 
                 {% if m.status == "taken" %}
-                    ✅ Taken
+                    <span class="status-taken">✅ Taken</span>
                 {% elif m.status == "missed" %}
-                    ❌ Missed
+                    <span class="status-missed">❌ Missed</span>
                 {% else %}
-                    ⏳ Pending
+                    <span class="status-pending">⏳ Pending</span>
                 {% endif %}
 
                 {% if m.alert == "NOW" %}
-                    <div class="alert-box" style="background:red; color:white; padding:10px; margin-top:5px; border-radius:8px;">
+                    <div class="alert-box">
                         🔔 <b>TAKE MEDICINE NOW!</b>
                     </div>
                 {% endif %}
@@ -97,10 +99,12 @@
 
             <div>
                 <a href="/take/{{ loop.index0 }}">✔ Taken</a>
-                <a href="/miss/{{ loop.index0 }}">❌ Missed</a>
+                <a href="/miss/{{ loop.index0 }}">❌ Miss</a>
                 <a href="/delete/{{ loop.index0 }}">🗑 Delete</a>
             </div>
         </li>
+    {% else %}
+        <p style="text-align:center;">No medicines added yet. Add one above! ☝️</p>
     {% endfor %}
     </ul>
 

@@ -1,10 +1,11 @@
-
 from flask import Flask, render_template, request, redirect, session
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
 import os
 import pytz
+from chatbot import get_chatbot_response
+from predictor import predict_adherence, get_insights
 
 # India Timezone
 INDIA_TZ = pytz.timezone('Asia/Kolkata')
@@ -155,7 +156,6 @@ def dashboard():
     user = session["user"]
     user_meds = medicines.get(user, [])
 
-    # India time use cheyyam
     now = datetime.now(INDIA_TZ).strftime("%I:%M %p")
     today = datetime.now(INDIA_TZ).strftime("%Y-%m-%d")
 
@@ -283,6 +283,42 @@ def delete(index):
 def logout():
     session.clear()
     return redirect("/")
+
+
+# ============ AI CHATBOT ============
+@app.route("/chatbot", methods=["GET", "POST"])
+def chatbot():
+    if "user" not in session or session.get("role") != "patient":
+        return redirect("/login")
+    
+    response = None
+    user_message = ""
+    
+    if request.method == "POST":
+        user_message = request.form["message"]
+        response = get_chatbot_response(user_message)
+    
+    return render_template("chatbot.html", 
+                          response=response, 
+                          user_message=user_message)
+
+
+# ============ AI INSIGHTS ============
+@app.route("/insights")
+def insights():
+    if "user" not in session or session.get("role") != "patient":
+        return redirect("/login")
+    
+    user = session["user"]
+    user_meds = medicines.get(user, [])
+    
+    prediction = predict_adherence(user_meds)
+    smart_insights = get_insights(user_meds)
+    
+    return render_template("insights.html",
+                          user=user,
+                          prediction=prediction,
+                          insights=smart_insights)
 
 
 if __name__ == "__main__":

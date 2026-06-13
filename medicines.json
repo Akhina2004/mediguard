@@ -6,7 +6,7 @@
             "date": "2026-06-13",
             "status": "taken",
             "recurring": "daily",
-            "alert": "NOW"
+            "alert": ""
         },
         {
             "name": "paracetamol",
@@ -15,6 +15,14 @@
             "status": "pending",
             "recurring": "no",
             "alert": ""
+        },
+        {
+            "name": "aspirin",
+            "time": "07:04 PM",
+            "date": "2026-06-13",
+            "status": "missed",
+            "recurring": "no",
+            "alert": "NOW"
         }
     ]
 }
