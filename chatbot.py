@@ -1,18 +1,17 @@
-import google.generativeai as genai
+from google import genai
 import os
 
 # Get API key from environment variable
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 
 if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
-    model = genai.GenerativeModel('gemini-2.5-flash')
+    client = genai.Client(api_key=GEMINI_API_KEY)
 else:
-    model = None
+    client = None
 
 
 def get_chatbot_response(user_message):
-    if not model:
+    if not client:
         return "Chatbot not configured. Please set API key."
     
     try:
@@ -23,7 +22,10 @@ def get_chatbot_response(user_message):
         
         Response (max 100 words):"""
         
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
         return response.text
     except Exception as e:
         return f"Sorry, I'm having trouble right now. Please try again. Error: {str(e)}"
