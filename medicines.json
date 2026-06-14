@@ -23,14 +23,11 @@
             "status": "missed",
             "recurring": "no",
             "alert": ""
-        },
-        {
-            "name": "antibiotic",
-            "time": "09:23 AM",
-            "date": "2026-06-14",
-            "status": "pending",
-            "recurring": "daily",
-            "alert": ""
         }
-    ]
+    ],
+    "deleted_recurring": {
+        "Akhina": [
+            "antibiotic_09:23 AM"
+        ]
+    }
 }

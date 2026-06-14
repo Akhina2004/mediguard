@@ -159,9 +159,17 @@ def dashboard():
     now = datetime.now(INDIA_TZ).strftime("%I:%M %p")
     today = datetime.now(INDIA_TZ).strftime("%Y-%m-%d")
 
+    # Get deleted recurring medicines list
+    deleted_recurring = medicines.get("deleted_recurring", {}).get(user, [])
+
     # Auto-add recurring medicines for today
     for m in list(user_meds):
         if m.get("recurring") == "daily" and m.get("date") != today:
+            # Check if user deleted this recurring medicine
+            key = f"{m['name']}_{m['time']}"
+            if key in deleted_recurring:
+                continue
+            
             exists = any(
                 x["name"] == m["name"] and x["time"] == m["time"] and x["date"] == today
                 for x in user_meds
@@ -237,6 +245,13 @@ def add():
     if user not in medicines:
         medicines[user] = []
 
+    # If user re-adds a deleted recurring medicine, remove from deleted list
+    if recurring == "daily":
+        key = f"{name}_{time}"
+        if "deleted_recurring" in medicines and user in medicines["deleted_recurring"]:
+            if key in medicines["deleted_recurring"][user]:
+                medicines["deleted_recurring"][user].remove(key)
+
     medicines[user].append({
         "name": name,
         "time": time,
@@ -274,6 +289,21 @@ def delete(index):
     if "user" not in session:
         return redirect("/login")
     user = session["user"]
+    
+    # Get the medicine to delete
+    deleted_med = medicines[user][index]
+    
+    # If recurring, mark as deleted permanently
+    if deleted_med.get("recurring") == "daily":
+        if "deleted_recurring" not in medicines:
+            medicines["deleted_recurring"] = {}
+        if user not in medicines["deleted_recurring"]:
+            medicines["deleted_recurring"][user] = []
+        
+        key = f"{deleted_med['name']}_{deleted_med['time']}"
+        if key not in medicines["deleted_recurring"][user]:
+            medicines["deleted_recurring"][user].append(key)
+    
     medicines[user].pop(index)
     save_data(MEDICINES_FILE, medicines)
     return redirect("/dashboard")
