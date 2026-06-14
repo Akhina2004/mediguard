@@ -23,7 +23,7 @@ def get_chatbot_response(user_message):
         Response (max 100 words):"""
         
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-2.5-flash-lite",
             contents=prompt
         )
         return response.text
